@@ -22,6 +22,33 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+                <div class="form-inline my-2 my-lg-0">
+                    @if (Route::has('login'))
+                        <div>
+                            @auth
+                                <a href="{{ url('/home') }}">Home</a>
+                                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+
+                                <form id="logout-form" action="{{ route('logout')}}" method="POST" style="display: none">
+                                    @csrf
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}">Login</a>
+
+                                @if (Route::has('register'))
+                                    <a href="{{ route('register') }}">Register</a>
+                                @endif
+                            @endauth
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </nav>
+        
+        @can('logged-in')
+        <!-- navbar !-->
+        <nav class="navbar sub-nav navbar-expand-lg">
+            <div class="container">
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
@@ -31,32 +58,14 @@
                             <a class="nav-link" href="{{ route('admin.users.index') }}">Users</a>
                         </li>
                     </ul>
-                    <div class="form-inline my-2 my-lg-0">
-                        @if (Route::has('login'))
-                            <div>
-                                @auth
-                                    <a href="{{ url('/home') }}">Home</a>
-                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-
-                                    <form id="logout-form" action="{{ route('logout')}}" method="POST" style="display: none">
-                                        @csrf
-                                    </form>
-                                @else
-                                    <a href="{{ route('login') }}">Login</a>
-
-                                    @if (Route::has('register'))
-                                        <a href="{{ route('register') }}">Register</a>
-                                    @endif
-                                @endauth
-                            </div>
-                        @endif
-                    </div>
                 </div>
             </div>
         </nav>
+        @endcan
         <!-- navbar !-->
         
         <main class="container">
+            @include('partials.alerts')
             @yield('content')
         </main>
     </body>

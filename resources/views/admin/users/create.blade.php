@@ -6,7 +6,7 @@
     <div class="card">
 
     <form method="POST" action="{{route('admin.users.store')}}">
-        @include('admin.users.partials.form', ['craete => true'])
+        @include('admin.users.partials.form', ['create' => 'true'])
     </form>
 </div>
 

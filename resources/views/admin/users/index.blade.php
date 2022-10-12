@@ -4,8 +4,8 @@
 
     <div class="row">
         <div class="col-12">
-            <h1 class="float-right">Users</h1>   
-            <a class="btn btn-sm btn-success float-right" href="{{ route('admin.users.create') }}" role="button">Create</a>        
+            <h1 class="float-left">Users</h1>   
+            <a class="btn btn-sm btn-success float-right" href="{{ route('admin.users.create') }}" role="button">Create</a>
         </div>
     </div>
 

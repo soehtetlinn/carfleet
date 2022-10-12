@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Contracts\Support\ValidatedData;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
 
 class UserController extends Controller
 {
@@ -16,8 +20,12 @@ class UserController extends Controller
      */
     public function index()
     {
+        if(Gate::denies('logged-in')){
+            dd('no access');
+        }
         return view('admin.users.index', ['users' => User::paginate(10)]);
-                    }
+                    
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -35,11 +43,14 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $user = User::create($request->except(['_token', 'roles']));
+        $validatedData = $request->validated();
 
+        $user = User::create($validatedData);
         $user->roles()->sync($request->roles);
+
+        $request->session()->flash('success', 'You have created the user');
 
         return redirect(route('admin.users.index'));
     }
@@ -80,10 +91,16 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        if(!$user){
+            $request->session()->flash('error', 'You cannot edit the user');
+            return redirect(route('admin.users.index'));
+        }
 
         $user->update($request->except((['_token','roles'])));
         $user->roles()->sync($request->roles);
+
+        $request->session()->flash('success', 'You have edited the user');
 
         return redirect((route('admin.users.index')));
     }
@@ -94,9 +111,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         User::destroy($id);
+
+        $request->session()->flash('success', 'You have deleted the user');
 
         return redirect(route('admin.users.index'));
     }
